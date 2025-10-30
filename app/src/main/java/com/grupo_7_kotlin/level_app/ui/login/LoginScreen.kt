@@ -107,7 +107,7 @@ fun LoginScreen(
 
 
                 Image(  // insertar una imagen en la interfaz
-                    painter= painterResource(id = R.drawable.logoduoc),
+                    painter= painterResource(id = R.drawable.logo_level_up),
                     contentDescription = "Logo App",
                     modifier = Modifier
                         .fillMaxWidth()

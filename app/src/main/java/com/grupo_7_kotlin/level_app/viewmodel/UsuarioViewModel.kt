@@ -2,6 +2,7 @@ package com.grupo_7_kotlin.level_app.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.grupo_7_kotlin.level_app.data.model.Usuario
 import com.grupo_7_kotlin.level_app.data.repository.UsuarioRepository
 
 class UsuarioViewModel(context: Context) : ViewModel() {
