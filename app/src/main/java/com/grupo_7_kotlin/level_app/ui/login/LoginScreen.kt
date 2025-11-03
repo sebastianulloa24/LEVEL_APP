@@ -1,256 +1,113 @@
 package com.grupo_7_kotlin.level_app.ui.login
 
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import com.grupo_7_kotlin.level_app.R
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.grupo_7_kotlin.level_app.ui.login.LoginViewModel
+// Importes del ViewModel
+import com.grupo_7_kotlin.level_app.data.repository.ResultadoAutenticacion
+import com.grupo_7_kotlin.level_app.viewmodel.UsuarioViewModel
+import com.grupo_7_kotlin.level_app.viewmodel.UsuarioViewModelFactory
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-// Permite usar funciones Material 3 qe son experimentales
-@Composable  // Genera Interfz Garfica
-
+@Composable
 fun LoginScreen(
-    navController: NavController,
-    vm: LoginViewModel = viewModel()
-
+    viewModel: UsuarioViewModel,
+    onLoginSuccess: () -> Unit,
+    onGoToRegister: () -> Unit
 ){
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    val state =vm.uiState
-    var showPass by remember { mutableStateOf(false) }
+    val loginResult by viewModel.loginResult.collectAsState()
 
-    // darkColorScheme  es una funcion de material3 que define un color oscuro
-    val ColorScheme = darkColorScheme(
-        primary= Color(0xFF98222E),
-        onPrimary = Color.White,
-        onSurface = Color(0xFF333333), //Gris
-    ) // fin dark
+    // 1. Escuchar el resultado y reaccionar (navegación o error)
+    LaunchedEffect(loginResult) {
+        when (val result = loginResult) {
+            is ResultadoAutenticacion.Exito -> {
+                // El Snackbar y la navegación deben ser lo último
+                snackbarHostState.showSnackbar("✅ ¡Bienvenido! Iniciando sesión...")
 
+                // NOTA: La función iniciarSesion ya actualizó _currentUser.value = usuario.
+                // Como es una StateFlow, el cambio se refleja de inmediato.
 
-    MaterialTheme(
-        colorScheme = ColorScheme
-    ){ // inicio Aplicar Material
+                onLoginSuccess() // Esto dispara la navegación a CATALOG_SCREEN
+                viewModel.clearLoginResult()
+            }
+            is ResultadoAutenticacion.Error -> {
+                snackbarHostState.showSnackbar("❌ Error: ${result.mensaje}")
+                viewModel.clearLoginResult()
+            }
+            null -> Unit
+        }
+    }
 
+    // --- ESTA PARTE ES CRUCIAL SI QUIERES VERIFICAR QUE EL USUARIO EXISTE ---
+    // Aunque no es estrictamente necesario, es una doble verificación
+    /*
+    val currentUser by viewModel.currentUser.collectAsState()
+    LaunchedEffect(currentUser) {
+        if (currentUser != null && loginResult is ResultadoAutenticacion.Exito) {
+             // Ya tenemos el usuario y el login fue exitoso, ahora podemos navegar
+             onLoginSuccess()
+             viewModel.clearLoginResult()
+        }
+    }
+    */
 
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Iniciar Sesión Level-Up", style = MaterialTheme.typography.headlineLarge)
+            Spacer(Modifier.height(32.dp))
 
-        Scaffold (
-            // Crea Estuctra basica de la pantalla Se define topBar, BottomBar
-            topBar = {
-                TopAppBar(title = {Text("Mi Primer App",
-                    color =MaterialTheme.colorScheme.onPrimary,
-                )})
+            // Campo de Email
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                // Crea un AppBar con un titulo
+            // Campo de passwordHash
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Contraseña") }, // Mejorar el label
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-            }// fin topBar
-        ) // fin Scaff
-        {// Inicio Inner
-                innerPadding ->
-            // Representa el espacio interno para que no choque con el topBar
+            Spacer(Modifier.height(24.dp))
 
-            Column (  //   Colaca los elementos de la Ui
-                modifier = Modifier
-                    .padding( innerPadding)
-                    // Evita que quede oculto
-                    .fillMaxSize() // Hace que la columnna tome el todo el tamaño
-                    .padding(16.dp)
-                    .background(Color(0xFFF0F0F0)), // gris Claro
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally  // Centra horizontalmente
-                //Define  que elementos dentro la columna estaran separados por 20.dp
-            )// fin column
-            {// inicio Contenido
-                Text(text="Bienvenido !",
-                    style= MaterialTheme.typography.headlineMedium,
-                    color=MaterialTheme.colorScheme.primary
-
-
-                ) // Muestra un texto simple en la pantalla
-
-
-
-
-                Image(  // insertar una imagen en la interfaz
-                    painter= painterResource(id = R.drawable.logo_level_up),
-                    contentDescription = "Logo App",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
-                    contentScale = ContentScale.Fit
-                    // Ajusta la imagen para que encaje dentro del espacio
-
-                ) // Fin Image
-
-
-// agregar un espacio entre la imagen y el boton
-
-                Spacer(modifier = Modifier.height(66.dp))
-
-
-
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                )// Fin Row
-                {// Aplica row
-                    Text("texto uno",
-                        style =MaterialTheme.typography.bodyLarge.copy(
-                            color=MaterialTheme.colorScheme.onSurface.copy(alpha=0.8f),
-                            fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .padding(end=8.dp)
-                    )// fin texto 1
-
-
-                    Text("texto dos",
-                        style =MaterialTheme.typography.bodyLarge.copy(
-                            color=MaterialTheme.colorScheme.onSurface.copy(alpha=0.8f),
-                            fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .padding(end=8.dp)
-                    )// fin texto 1
-
-
-                } // fin Aplica row
-
-
-                OutlinedTextField(
-                    value=state.username,
-                    onValueChange = vm::onUsernameChange,
-                    label={Text("Usuario")},
-                    singleLine = true,
-                    modifier=Modifier.fillMaxWidth(0.95f)
-                )
-
-                OutlinedTextField(
-                    value=state.password,
-                    onValueChange = vm::onPasswordChange,
-                    label={Text("Contraseña")},
-                    singleLine = true,
-                    visualTransformation = if (showPass) VisualTransformation.None else
-                        PasswordVisualTransformation(),
-
-                    trailingIcon = {
-                        TextButton( onClick = {showPass =!showPass})
-                        {
-                            Text(if (showPass) "Ocultar" else "Ver")
-                        }
-                    },// fin trail
-
-                            modifier=Modifier.fillMaxWidth(0.95f)
-
-                )// Password
-
-
-
-
-
-                if (state.error !=null){
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text=state.error ?:"",
-                        color= MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                }
-
-
-// agregar un espacio entre la imagen y el boton
-
-                Spacer(modifier = Modifier.height(66.dp))
-
-                Button(onClick = {/* accion futura*/
-                    vm.submit { user ->
-                        //navController.navigate("muestraDatos/user")
-                        navController.navigate("DrawerMenu/user")
-
-                        // Navegar a una pantalla pasando el parametro
-                        { // inicio navegar
-                        popUpTo("login"){inclusive= true}
-                            // No puede volver al login con Back
-
-                        // evite crear una nueva instancia
-                            launchSingleTop =true
-                        } // termino navegar
-
-                    }// fin submit
+            // Botón de Login
+            Button(
+                onClick = {
+                    // Llama a la función del ViewModel
+                    viewModel.iniciarSesion(email, password)
                 },
-                    enabled=!state.isLoading,
-                    modifier = Modifier.fillMaxWidth(0.6f)
+                modifier = Modifier.fillMaxWidth(),
+                enabled = email.isNotBlank() && password.isNotBlank()
+            ) {
+                Text("Iniciar Sesión")
+            }
 
-                )//fin button
+            Spacer(Modifier.height(16.dp))
 
-
-                {
-                   // Text("Presioname")
-                    Text(if(state.isLoading) "Validando" else "Iniciar Sesion" )
-
-                } // fin boton
-
-
-
-            }// fin Contenido
-
-        } // Fin inner
-
-
-    } // fin Aplicar Material
-}// Fin HomeScreen
-
-
-@Preview(showBackground = true) // Genera la vista
-@Composable  // Genera Interfz Garfica
-
-fun LoginScreenPreview(){
-
- //   Crear un navController de manera ficticia para fines de la vista previa
-    val navController = rememberNavController()
-
-    // Puedes usar un ViewModel simulado aquí si no tienes acceso a uno real
-    val vm =
-        LoginViewModel() // Suponiendo que LoginViewModel está correctamente configurado para la vista previa
-
-    LoginScreen(navController = navController, vm = vm)
-
-
-}// Fin LoginScreen
+            // Botón para ir a Registro
+            TextButton(onClick = onGoToRegister) {
+                Text("¿No tienes cuenta? Regístrate aquí.")
+            }
+        }
+    }
+}

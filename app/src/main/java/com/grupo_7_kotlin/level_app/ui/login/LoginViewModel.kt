@@ -4,36 +4,46 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.grupo_7_kotlin.level_app.data.repository.AuthRepository
+import androidx.lifecycle.viewModelScope
+import com.grupo_7_kotlin.level_app.data.dao.UsuarioDao // Asegúrate de importar el DAO real
+import kotlinx.coroutines.launch
+import com.grupo_7_kotlin.level_app.data.repository.ResultadoAutenticacion // Si es necesario
+
+
 
 class LoginViewModel (
-    private val repo: AuthRepository= AuthRepository()
+    private val usuarioDao: UsuarioDao
 ): ViewModel(){
+
 
     var uiState by mutableStateOf(LoginUiState())
 
-    fun onUsernameChange(value:String){
-        uiState=uiState.copy(username=value, error=null)
+    fun onEmailChange(value:String){
+        uiState=uiState.copy(email = value, error = null)
     }
 
     fun onPasswordChange(value:String){
-        uiState=uiState.copy(password=value, error=null)
-    }
-// Funciones de actualizacion que se llaman desde TextFiel de la Ui
-
-
-    fun submit(onSuccess:(String) -> Unit){
-        uiState =uiState.copy(isLoading=true, error=null)
-
-        val oK = repo.login(uiState.username.trim(), uiState.password)
-
-        uiState =uiState.copy(isLoading=false, error=null)
-
-        if(oK) onSuccess(uiState.username.trim())
-        else uiState =uiState.copy(error="Credenciales Invalidas")
-
+        uiState=uiState.copy(password = value, error = null)
     }
 
+    fun submit(onSuccess: (String) -> Unit){
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true, error = null)
 
+            try {
+                // Lógica de autenticación...
+                val usuario = usuarioDao.obtenerUsuarioPorEmail(uiState.email.trim())
+                val passwordHashIngresado = uiState.password.hashCode().toString()
 
-}// fin viewmodel
+                if (usuario != null && usuario.passwordHash == passwordHashIngresado) {
+                    uiState = uiState.copy(isLoading = false, error = null)
+                    onSuccess(uiState.email.trim())
+                } else {
+                    uiState = uiState.copy(isLoading = false, error = "Credenciales Inválidas")
+                }
+            } catch (e: Exception) {
+                uiState = uiState.copy(isLoading = false, error = "Error de conexión o sistema.")
+            }
+        }
+    }
+}
