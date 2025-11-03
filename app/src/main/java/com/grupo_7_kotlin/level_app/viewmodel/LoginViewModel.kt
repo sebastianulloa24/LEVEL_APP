@@ -1,15 +1,13 @@
-package com.grupo_7_kotlin.level_app.ui.login
+package com.grupo_7_kotlin.level_app.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.grupo_7_kotlin.level_app.data.dao.UsuarioDao // Asegúrate de importar el DAO real
+import com.grupo_7_kotlin.level_app.data.dao.UsuarioDao
+import com.grupo_7_kotlin.level_app.ui.login.LoginUiState
 import kotlinx.coroutines.launch
-import com.grupo_7_kotlin.level_app.data.repository.ResultadoAutenticacion // Si es necesario
-
-
 
 class LoginViewModel (
     private val usuarioDao: UsuarioDao

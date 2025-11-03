@@ -11,7 +11,7 @@ import androidx.navigation.navArgument
 import com.grupo_7_kotlin.level_app.ui.components.PantallaCanje
 import com.grupo_7_kotlin.level_app.ui.perfil.ProfilScreen
 import com.grupo_7_kotlin.level_app.ui.admin.DebugScreen
-import com.grupo_7_kotlin.level_app.ui.catalogo.SplashScreen
+import com.grupo_7_kotlin.level_app.ui.components.SplashScreen
 import com.grupo_7_kotlin.level_app.ui.components.ScannerScreen
 import com.grupo_7_kotlin.level_app.ui.login.LoginScreen
 import com.grupo_7_kotlin.level_app.ui.menu.MenuPrincipal

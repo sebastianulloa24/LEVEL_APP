@@ -1,9 +1,13 @@
 package com.grupo_7_kotlin.level_app.ui.components
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
@@ -34,46 +38,70 @@ private const val TAG = "ScannerScreen"
 @Composable
 fun ScannerScreen(
     navController: NavController,
-    onQrScanned: (String) -> Unit, // Callback para manejar el resultado del escaneo
+    onQrScanned: (String) -> Unit,
     viewModel: UsuarioViewModel
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Estado para gestionar si tenemos el permiso de cámara
     var hasCameraPermission by remember {
-        mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
     }
 
-    // Lanza la solicitud de permiso si no lo tenemos
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             hasCameraPermission = isGranted
-            if (!isGranted) {
-                // Si el usuario deniega, volvemos atrás
-                navController.popBackStack()
-            }
+            if (!isGranted) navController.popBackStack()
         }
     )
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         if (!hasCameraPermission) {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
     if (hasCameraPermission) {
-        // Vista principal del escáner con la vista previa de la cámara
         CameraPreview(
             lifecycleOwner = lifecycleOwner,
             context = context,
-            onQrScanned = onQrScanned,
-            // Permite volver atrás si el usuario presiona el botón de retroceso en la pantalla
+            onQrScanned = { result ->
+                Log.d("QR_RESULT", "QR Detectado: $result")
+
+                // Si el QR contiene un link, abrimos el navegador
+                if (result.startsWith("http")) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(result))
+
+                    // Opción 1: abrir en Chrome si está disponible
+                    intent.setPackage("com.android.chrome")
+                    try {
+                        context.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        // Si no hay Chrome, abrir con el navegador por defecto
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, Uri.parse(result))
+                        )
+                    }
+                } else {
+                    Toast.makeText(
+                        context,
+                        "QR detectado: $result",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                // Vuelve atrás después de abrir el link
+                navController.popBackStack()
+            },
             onNavigateBack = { navController.popBackStack() }
         )
     } else {
-        // Muestra un mensaje si no hay permiso (aunque el LaunchedEffect ya navegaría hacia atrás)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -131,14 +159,14 @@ fun CameraPreview(
                         }))
                     }
 
-                // Select back camera
+
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                 try {
-                    // Unbind any previous usages
+
                     cameraProvider.unbindAll()
 
-                    // Bind use cases to camera
+
                     cameraProvider.bindToLifecycle(
                         lifecycleOwner,
                         cameraSelector,

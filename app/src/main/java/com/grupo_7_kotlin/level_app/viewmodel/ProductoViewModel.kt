@@ -105,7 +105,7 @@ class ProductoViewModel(
         viewModelScope.launch {
             val nuevaResena = Resena( // Crea el objeto Resena
                 productoId = productoId,
-                usuarioId = userId, // 👈 CORREGIDO: Usa el ID del usuario aquí
+                usuarioId = userId, // CORREGIDO: Usa el ID del usuario aquí
                 calificacion = calificacion,
                 comentario = comentario
             )

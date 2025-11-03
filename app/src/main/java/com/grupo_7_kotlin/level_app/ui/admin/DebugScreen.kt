@@ -20,7 +20,7 @@ fun DebugScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("🛠️ Herramientas de Administración") },
+                title = { Text("Herramientas de Administración") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")

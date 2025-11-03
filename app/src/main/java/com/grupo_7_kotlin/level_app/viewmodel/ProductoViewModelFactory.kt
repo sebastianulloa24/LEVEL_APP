@@ -15,7 +15,7 @@ class ProductoViewModelFactory(private val context: Context) : ViewModelProvider
         if (modelClass.isAssignableFrom(ProductoViewModel::class.java)) {
             // Accede a la instancia singleton de la base de datos
             val database = AppDatabase.getDatabase(context)
-            // 1. Obtiene el ProductoDAO (ya lo tenías)
+            // Obtiene el ProductoDAO (ya lo tenías)
             val productoDao = database.productoDao()
             val resenaDao = database.resenaDao()
             //se agregan ambos daos
