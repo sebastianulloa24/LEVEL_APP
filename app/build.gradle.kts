@@ -53,12 +53,17 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
+
     // --- NAVEGACIÓN COMPOSE ---
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
     // --- ICONOS ---
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.material3)
 
     // --- ROOM (Base de datos local) ---
     val roomVersion = "2.6.1"
@@ -84,6 +89,10 @@ dependencies {
     // Componentes de Compose (si no están)
     implementation("androidx.compose.ui:ui-tooling-preview")
 
+    //GOOGLE MAP
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
 
 
     // --- TESTING ---

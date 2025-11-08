@@ -8,12 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.grupo_7_kotlin.level_app.ui.components.PantallaCanje
+import com.grupo_7_kotlin.level_app.view.PantallaCanje
 import com.grupo_7_kotlin.level_app.ui.perfil.ProfilScreen
 import com.grupo_7_kotlin.level_app.ui.admin.DebugScreen
-import com.grupo_7_kotlin.level_app.ui.components.SplashScreen
+import com.grupo_7_kotlin.level_app.view.SplashScreen
 import com.grupo_7_kotlin.level_app.ui.components.ScannerScreen
-import com.grupo_7_kotlin.level_app.ui.login.LoginScreen
+import com.grupo_7_kotlin.level_app.view.LoginScreen
 import com.grupo_7_kotlin.level_app.ui.menu.MenuPrincipal
 import com.grupo_7_kotlin.level_app.ui.catalogo.PantallaCatalogo
 import com.grupo_7_kotlin.level_app.ui.catalogo.PantallaDetalleProducto
@@ -24,6 +24,7 @@ import com.grupo_7_kotlin.level_app.viewmodel.UsuarioViewModel
 import com.grupo_7_kotlin.level_app.viewmodel.UsuarioViewModelFactory
 
 object AppRoutes {
+    const val MENU_PRINCIPAL = "menu_principal"
     const val LOGIN_SCREEN = "login_screen"
     const val REGISTER_SCREEN = "register_screen"
     const val CATALOG_SCREEN = "catalog_screen"
@@ -34,7 +35,7 @@ object AppRoutes {
     const val DEBUG_SCREEN = "debug_admin_tool"
     const val SPLASH_SCREEN = "splash"
     const val SCANNER_SCREEN = "qr_scanner"
-    const val MENU_PRINCIPAL = "menu_principal"
+
 }
 
 @Composable
@@ -53,13 +54,14 @@ fun AppNavigation() {
     NavHost(
         navController = navController,
         startDestination = AppRoutes.SPLASH_SCREEN
+
     ) {
 
 
         composable(route = AppRoutes.SPLASH_SCREEN) {
             SplashScreen(
                 onTimeout = {
-                    navController.navigate(AppRoutes.LOGIN_SCREEN) {
+                    navController.navigate(AppRoutes.MENU_PRINCIPAL) {
                         popUpTo(AppRoutes.SPLASH_SCREEN) { inclusive = true }
                     }
                 }
@@ -174,12 +176,21 @@ fun AppNavigation() {
                 }
             )
         }
-
-
-
         composable(route = AppRoutes.MENU_PRINCIPAL) {
-            MenuPrincipal(navController = navController)
+            MenuPrincipal(
+                navController = navController,
+                usuarioViewModel = usuarioViewModel,
+                onProductoDestacadoClick = { productId ->
+                    navController.navigate("${AppRoutes.PRODUCT_DETAIL_BASE}/$productId")
+                }
+            )
         }
 
+
+
+
+
     }
+
 }
+

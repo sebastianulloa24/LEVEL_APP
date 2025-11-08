@@ -7,8 +7,11 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun RatingBar(
@@ -16,23 +19,28 @@ fun RatingBar(
     rating: Float, // La calificación actual (ej: 3.5)
     stars: Int = 5, // Total de estrellas
     starColor: Color = Color(0xFFFFC107),
-    onRatingChange: (Float) -> Unit = {} // Función de callback para cambiar la calificación
+    onRatingChange: (Float) -> Unit = {} // Callback para cambios
 ) {
-    // Fila que contiene las estrellas
     Row(modifier = modifier) {
         (1..stars).forEach { index ->
-            // Determina si la estrella debe estar completamente llena o vacía
             val isFilled = index <= rating
-
             Icon(
-                // Usa Star (llena) si está calificada, StarBorder (vacía) si no
                 imageVector = if (isFilled) Icons.Filled.Star else Icons.Default.StarBorder,
-                contentDescription = "$index estrellas", // Texto para accesibilidad
+                contentDescription = "$index estrellas",
                 tint = starColor,
-                // Permite hacer clic para cambiar la calificación (si la función fue proporcionada)
-                modifier = Modifier
-                    .clickable { onRatingChange(index.toFloat()) }
+                modifier = Modifier.clickable { onRatingChange(index.toFloat()) }
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RatingBarPreview() {
+    val (rating, setRating) = remember { mutableStateOf(3f) }
+
+    RatingBar(
+        rating = rating,
+        onRatingChange = { newRating -> setRating(newRating) }
+    )
 }

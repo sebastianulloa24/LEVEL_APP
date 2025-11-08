@@ -72,7 +72,7 @@ fun PantallaDetalleProducto(
                     Text(it.descripcion, style = MaterialTheme.typography.bodyLarge)
                     Spacer(Modifier.height(16.dp))
                     Text("Precio: $${it.precio}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
-                    Divider(Modifier.padding(vertical = 16.dp))
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
                 } ?: run {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator()
@@ -85,11 +85,11 @@ fun PantallaDetalleProducto(
                 currentUser?.let {
                     FormularioResena(
                         productId = productId,
-                        userId = currentUserId, // 👈 CORREGIDO: Se pasa la ID del usuario (Int)
+                        userId = currentUserId,
                         viewModel = productoViewModel
                     )
                 } ?: Text("Inicia sesión para dejar una reseña.", style = MaterialTheme.typography.titleMedium)
-                Divider(Modifier.padding(vertical = 16.dp))
+                HorizontalDivider(modifier = Modifier.fillMaxWidth())
             }
             // Sección de Lista de Reseñas
             item {

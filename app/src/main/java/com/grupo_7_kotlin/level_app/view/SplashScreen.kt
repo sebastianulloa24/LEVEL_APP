@@ -1,4 +1,4 @@
-package com.grupo_7_kotlin.level_app.ui.components
+package com.grupo_7_kotlin.level_app.view
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image

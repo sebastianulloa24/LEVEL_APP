@@ -1,4 +1,4 @@
-package com.grupo_7_kotlin.level_app.ui.login
+package com.grupo_7_kotlin.level_app.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 // Importes del ViewModel
 import com.grupo_7_kotlin.level_app.data.repository.ResultadoAutenticacion
 import com.grupo_7_kotlin.level_app.viewmodel.UsuarioViewModel
-import com.grupo_7_kotlin.level_app.viewmodel.UsuarioViewModelFactory
 
 
 @Composable

@@ -168,5 +168,5 @@ fun DatosFila(label: String, value: String) {
             color = MaterialTheme.colorScheme.secondary
         )
     }
-    Divider(Modifier.fillMaxWidth())
+    HorizontalDivider(modifier = Modifier.fillMaxWidth())
 }
