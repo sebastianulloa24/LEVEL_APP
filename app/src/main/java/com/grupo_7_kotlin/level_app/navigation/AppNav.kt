@@ -8,12 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.grupo_7_kotlin.level_app.view.PantallaCanje
+import com.grupo_7_kotlin.level_app.ui.menu.PantallaCanje
 import com.grupo_7_kotlin.level_app.ui.perfil.ProfilScreen
 import com.grupo_7_kotlin.level_app.ui.admin.DebugScreen
-import com.grupo_7_kotlin.level_app.view.SplashScreen
+import com.grupo_7_kotlin.level_app.ui.login.SplashScreen
 import com.grupo_7_kotlin.level_app.ui.components.ScannerScreen
-import com.grupo_7_kotlin.level_app.view.LoginScreen
+import com.grupo_7_kotlin.level_app.ui.login.LoginScreen
 import com.grupo_7_kotlin.level_app.ui.menu.MenuPrincipal
 import com.grupo_7_kotlin.level_app.ui.catalogo.PantallaCatalogo
 import com.grupo_7_kotlin.level_app.ui.catalogo.PantallaDetalleProducto

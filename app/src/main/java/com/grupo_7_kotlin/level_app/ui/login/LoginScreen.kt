@@ -1,4 +1,4 @@
-package com.grupo_7_kotlin.level_app.view
+package com.grupo_7_kotlin.level_app.ui.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

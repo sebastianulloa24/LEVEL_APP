@@ -1,4 +1,4 @@
-package com.grupo_7_kotlin.level_app.view
+package com.grupo_7_kotlin.level_app.ui.menu
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
