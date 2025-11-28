@@ -33,7 +33,7 @@ class LoginScreenTest {
     }
 
     @Test
-    fun login_exitoso_navega_correctamente() = runBlocking {
+    fun loginExitosoNavegaCorrectamente() = runBlocking {
 
         val email = "sebastian@test.com"
         val password = "1234"
@@ -76,7 +76,7 @@ class LoginScreenTest {
     }
 
     @Test
-    fun login_fallido_muestra_mensaje_error() {
+    fun loginFallidoMuestraMensajeError() {
 
         val viewModel = UsuarioViewModel(db.usuarioDao())
 
