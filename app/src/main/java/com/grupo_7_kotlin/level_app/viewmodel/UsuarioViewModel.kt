@@ -41,19 +41,29 @@ class UsuarioViewModel(private val usuarioDao: UsuarioDao) : ViewModel() {
             try {
                 val usuario = usuarioDao.obtenerUsuarioPorEmail(email)
                 val passwordHashIngresado = password.hashCode().toString()
-                if (usuario != null && usuario.passwordHash == passwordHashIngresado) {
-                    _loginResult.value = ResultadoAutenticacion.Exito
-                    _currentUser.value = usuario
-                } else {
-                    _loginResult.value = ResultadoAutenticacion.Error("Email o contraseña incorrectos.")
+
+                if (usuario == null) {
+                    _loginResult.value = ResultadoAutenticacion.Error("Usuario no encontrado")
                     _currentUser.value = null
+                    return@launch
                 }
+
+                if (usuario.passwordHash != passwordHashIngresado) {
+                    _loginResult.value = ResultadoAutenticacion.Error("Usuario no encontrado")
+                    _currentUser.value = null
+                    return@launch
+                }
+
+                _loginResult.value = ResultadoAutenticacion.Exito
+                _currentUser.value = usuario
+
             } catch (e: Exception) {
                 _loginResult.value = ResultadoAutenticacion.Error("Error de sistema al iniciar sesión.")
                 _currentUser.value = null
             }
         }
     }
+
 
     // --- REGISTRO ---
     fun registerUser(

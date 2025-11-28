@@ -12,10 +12,7 @@ import kotlinx.coroutines.launch
 class LoginViewModel (
     private val usuarioDao: UsuarioDao
 ): ViewModel(){
-
-
     var uiState by mutableStateOf(LoginUiState())
-
     fun onEmailChange(value:String){
         uiState=uiState.copy(email = value, error = null)
     }
@@ -27,7 +24,6 @@ class LoginViewModel (
     fun submit(onSuccess: (String) -> Unit){
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, error = null)
-
             try {
                 // Lógica de autenticación...
                 val usuario = usuarioDao.obtenerUsuarioPorEmail(uiState.email.trim())
